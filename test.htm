@@ -1,0 +1,18 @@
+<input type="image" src='images/add.gif' title='Edit'
+onclick="goherenot('?a=content&amp;q=edit&amp;id=73');" />
+
+<table border=1>
+<tr onclick="gohere('?a=content&amp;q=edit&amp;id=73');">
+<td>Something</td>
+</tr>
+</table>
+<script>
+
+function gohere(url) {
+    location.href = url;
+}
+function goherenot(url) {
+    alert(url); // returns exactly what it should...
+    location.href = url; // just doesn't want to do this...
+}
+</script>

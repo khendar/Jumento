@@ -1,0 +1,37 @@
+<html><head><style = "text\css">
+a{border:none;}
+.info{
+    position:relative; /*this is the key*/
+    z-index:24; 
+	border:0px;
+    color:#000;
+    text-decoration:none}
+
+a.info:hover{z-index:25;    border:0px;}
+
+a.info span{display: none   ; border:none;}
+
+a.info:hover span{ /*the span will display just on :hover state*/
+    display:block;
+    position:absolute;
+    top:-1em; left:1em; width:15em;
+ 	border:0px;
+    background-color:#cff; color:#000;
+    text-align: center}
+a, .image{border:0px;}
+
+</style>
+ <SCRIPT language="JavaScript">
+function submitform()
+{
+  alert("hello");
+}
+</SCRIPT>
+</head>
+<body>
+
+<a class="info" href="javascript:submitform();" ><img "image" src = "worry.gif" style="border:0px;"><span>Looks worried doesn't he?</span>
+</a>
+
+</body>
+</html>
