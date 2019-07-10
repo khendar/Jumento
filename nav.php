@@ -1,8 +1,9 @@
 <?php
 include("db.php");
 $parentselectquery = "SELECT * FROM pages WHERE page_id>0 AND parent_id=0 AND `page_visibility`='public' ORDER BY `page_order` ASC";
-$parentselectresult = mysql_query($parentselectquery, $linkID) or die(mysql_error());
-$count = mysql_num_rows($parentselectresult);
+
+$parentselectresult = $linkID->query($parentselectquery);
+$count = $parentselectresult->num_rows;
 $current = $pageid;
 
 if($count ==0)
@@ -14,8 +15,11 @@ else
 	echo 	"<ul";
 	for ($i=0;$i<$count;$i++)
 	{	
-		$thispage = mysql_fetch_array($parentselectresult);	
+
+		$thispage = $parentselectresult->fetch_assoc();	
 		$thisid = $thispage["page_id"];
+		
+		
 		//echo "<a href=\"index.php?l=$thisid\">".$thispage["title"]."</a><br>";
 		echo"
 		><li

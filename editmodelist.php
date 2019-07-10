@@ -12,16 +12,18 @@
 			$makeroom = "
 UPDATE pages SET page_order = page_order + 1 
 			WHERE page_order > $page_order";
-    		$makeroomresult = mysql_query($makeroom, $linkID);
-			if ($msg = mysql_error())
+
+    		$makeroomresult = $linkID->query($makeroom);
+			if ($msg = $linkID->error)
 				echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
 			$addnew = "
 INSERT INTO pages (`page_order`, `page_title`, `page_description`, `page_keywords`,
 			`user_created`, `date_created`,`user_modified`, `page_visibility`)
 VALUES ($page_order+1, 'default title','default description','default keywords',
 			'$currentuser', NOW() , '$currentuser','private')";
-			$addnewresult = mysql_query($addnew, $linkID);
-			if ($msg = mysql_error())
+
+			$addnewresult = $linkID->query($addnew);
+			if ($msg = $linkID->error)
 				echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
 		break;
 		case("delete"):
@@ -29,16 +31,17 @@ VALUES ($page_order+1, 'default title','default description','default keywords',
 			echo "<h4>Deleting page $page_id</h4>";
 			$deletepage = "
 DELETE FROM pages WHERE page_id=$page_id";
-			$deleteresult = mysql_query($deletepage, $linkID);
-			if ($msg = mysql_error())
+
+			$deleteresult = $linkID->query($deletepage);
+			if ($msg = $linkID->error)
 				echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
 			$deletesections = "
 DELETE FROM sections WHERE page_id=$page_id";
-			$deleteresult = mysql_query($deletesections, $linkID) or die(mysql_error());
+			$deleteresult = $linkID->query($deletesections) or die($linkID->error);
 			$squeezeup = "
 UPDATE pages SET page_order = page_order - 1 WHERE page_order > $page_order";
-			$squeezeupresult = mysql_query($squeezeup, $linkID);
-			if ($msg = mysql_error())
+			$squeezeupresult = $linkID->query($squeezeup);
+			if ($msg = $linkID->error)
 				echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
     	break;
 	}
@@ -46,8 +49,9 @@ UPDATE pages SET page_order = page_order - 1 WHERE page_order > $page_order";
 
 	$getallquery = "
 SELECT * FROM pages WHERE `parent_id`=0 ORDER BY `page_order` ASC";
-	$getallresult = mysql_query($getallquery, $linkID);
-	if ($msg = mysql_error())
+
+	$getallresult = $linkID->query($getallquery);
+	if ($msg = $linkID->error)
 		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
     	
 	echo '<table style="width=100%;border:1px;padding:0px" cellspacing="0" class="output">';
@@ -62,9 +66,10 @@ SELECT * FROM pages WHERE `parent_id`=0 ORDER BY `page_order` ASC";
 		<th class="output"></th>
 		<th class="output"></th>			
   	</tr>';
-	for($i=0;$i<mysql_num_rows($getallresult);$i++)
+
+	for($i=0;$i<$getallresult->num_rows;$i++)
 	{		
-		$thispage = mysql_fetch_array($getallresult);
+		$thispage = $getallresult->fetch_assoc();
 		buildlist($thispage, $i);
 	}
 	echo '</table>';

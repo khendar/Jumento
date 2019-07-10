@@ -1,7 +1,8 @@
 <?php session_start();
 include("db.php");
 ini_set('arg_separator.output','&amp;');
-error_reporting(0);
+
+error_reporting(1);
 $pageid = $_GET["l"];
 
 $_SESSION["theme"]=$_POST["theme"];
@@ -12,13 +13,15 @@ $_SESSION["theme"] = $_POST["theme"];
 }	
 
 
+
+
 if($pageid==""){
 	$getfirst = "
 SELECT `page_id` FROM `pages` WHERE  `page_id`>0 AND `page_visibility`='public'";
-	$getfirstpageresult  = mysql_query($getfirst, $linkID);
-	if ($msg = mysql_error())
+	$getfirstpageresult  = $linkID->query($getfirst);
+	if ($msg = $linkID->error)
 		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
-  	$firstpage = mysql_fetch_array($getfirstpageresult);
+  	$firstpage = $getfirstpageresult->fetch_assoc();
 	$pageid=$firstpage['page_id'];
 
 }
@@ -31,15 +34,17 @@ SELECT * FROM pages, sections
 WHERE sections.page_id=$pageid AND sections.page_id = pages.page_id
 ORDER BY section_order ASC";
 	
-	$getpageresult  = mysql_query($getpage, $linkID);
-	if ($msg = mysql_error())
+
+	$getpageresult  = $linkID->query($getpage);
+	if ($msg = $linkID->error)
 		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
-    $sectioncount = mysql_num_rows($getpageresult);
+    $sectioncount = $getpageresult->num_rows;
 	if($sectioncount!=0)
 	{
 		for($i=0;$i<$sectioncount;$i++)
 		{
-	    	$page = mysql_fetch_array($getpageresult);
+
+	    	$page = $getpageresult->fetch_assoc();
 	    	$pagecontents .= '<br/>'.stripslashes($page["section_content"]);
 			if($_SESSION['username']!="")
 			{
@@ -49,15 +54,17 @@ ORDER BY section_order ASC";
 	}
 	else
 	{
-	   	$page = mysql_fetch_array($getpageresult);
+
+	   	$page = $getpageresult->fetch_assoc();
 		$getpage = "
 SELECT * FROM pages 
 WHERE pages.page_id=$pageid";
 	
-	$getpageresult  = mysql_query($getpage, $linkID);
-	if ($msg = mysql_error())
+
+	$getpageresult  = $linkID->query($getpage);
+	if ($msg = $linkID->error)
 		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
-		$page = mysql_fetch_array($getpageresult);
+		$page = $getpageresult->fetch_assoc();
 	}
 
 	$pagetitle = stripslashes($page["page_title"]);
@@ -131,10 +138,12 @@ else
 
 
 <?php
+
+
 if($task=='')
 	echo $pagecontents;
 else
-{
+{	echo $task;
 	include($task.'.php');
 	$_SESSION['task'] = $task;
 }
@@ -207,13 +216,14 @@ $getside = "SELECT * FROM pages, sections
 WHERE pages.page_id = -1
 AND pages.page_id = sections.page_id
 ORDER BY sections.section_order ASC ";
-$getsideresult = mysql_query($getside, $linkID);
-	if ($msg = mysql_error())
+
+$getsideresult = $linkID->query($getside);
+	if ($msg = $linkID->error)
 		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
  
-for($i=0;$i<mysql_num_rows($getsideresult);$i++)
+for($i=0;$i<$getsideresult->num_rows;$i++)
 {
-	$side_section = mysql_fetch_array($getsideresult);
+	$side_section = $getsideresult->fetch_assoc();
 	$side_content .= $side_section["section_content"];
 }
 echo $side_content;
@@ -224,16 +234,18 @@ FROM `users` , `user_profiles`
 WHERE users.user_id = user_profiles.user_id
 AND date_sub( now( ) , INTERVAL 5
 MINUTE ) <= user_profiles.date_last';
-$getonlineresult = mysql_query($getonline, $linkID);
-	if ($msg = mysql_error())
+
+$getonlineresult = $linkID->query($getonline);
+	if ($msg = $linkID->error)
 		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $getonline . '</pre><br /> (caused: ' . $msg . ')';
-$onlinecount = mysql_num_rows($getonlineresult);
+$onlinecount = $getonlineresult->num_rows;
 if($onlinecount !=0)
 {
 	echo $onlinecount .' user';if($onlinecount>1) echo 's'; echo' online <br/>[ ';
 	for($i=0;$i<$onlinecount;$i++)
 	{
-		$user = mysql_fetch_array($getonlineresult);
+
+		$user = $getonlineresult->fetch_assoc();
 		echo $user['user_name'];
 		if($i!=$onlinecount-1) echo ', ';		
 	}
@@ -261,10 +273,11 @@ $link  = $prefix.str_replace('&','&amp;',urlencode($validate)).$suffix;
 	</a>
 	</p> 
  <p>
-<--    <a href="<?php echo $link;?>"><img
+
+  <a href="<?php echo $link;?>"><img
         src="http://www.w3.org/Icons/valid-xhtml11"
         alt="Valid XHTML 1.1" height="31" width="88" /></a>
-  </p>-->
+  </p>
 
 <!--- right column end -->
 

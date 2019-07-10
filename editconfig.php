@@ -3,8 +3,8 @@
 echo "<h3>Configuration Mode</h3>";
 $getconfig = '
 SELECT * FROM `config`';
-$getconfigresult = mysql_query($getconfig, $linkID);
-if ($msg = mysql_error())
+$getconfigresult = $linkID->query($getconfig);
+if ($msg = $linkID->error)
 	echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
 	echo '<form id="changesettings" action="index.php" method="post">';
 	echo '<table style="width:100%;padding:0px;" cellspacing="0"class="output">';
@@ -15,9 +15,9 @@ if ($msg = mysql_error())
     	<th class="output">Value</th>
    		<th class="output">Description</th>
   	</tr>';
-for($i=0;$i<mysql_num_rows($getconfigresult);$i++)
+for($i=0;$i<$getconfigresult->num_rows;$i++)
 {
-	$setting = mysql_fetch_array($getconfigresult);	
+	$setting = $getconfigresult->fetch_assoc();	
 	buildlist($setting, $i);
 }
 	echo '</table>';

@@ -6,8 +6,9 @@ Administration Controls
 <?php
 
 $keepalive = 'update user_profiles set date_last = NOW() where user_id = '.$_SESSION['user_id'];
-$resultID = mysql_query($keepalive, $linkID);
-if ($msg = mysql_error())
+
+$resultID = $linkID->query($keepalive);
+if ($msg = $linkID->error)
 	echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $keepalive . '</pre><br /> (caused: ' . $msg .')';
 
 
@@ -16,11 +17,12 @@ $getpermissions = '
 SELECT * FROM `group_permissions`
 WHERE `group_id` = '.$user_group;
 
-$resultID = mysql_query($getpermissions, $linkID);
-if ($msg = mysql_error())
+
+$resultID = $linkID->query($getpermissions);
+if ($msg = $linkID->error)
 	echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $getpermissions . '</pre><br /> (caused: ' . $msg .')';
 
-$permissions = mysql_fetch_array($resultID);
+$permissions = $resultID->fetch_assoc();
 if($permissions['pages_edit'])
 {
 echo "<form id=\"editthispageform\" action=\"index.php\" method=\"post\" >

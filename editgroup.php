@@ -1,7 +1,7 @@
 <?php
 echo "<h3>Group Edit Mode</h3>";
 	$getallquery = "SELECT * FROM `group_permissions`";
-	$getallresult = mysql_query($getallquery, $linkID);
+	$getallresult = $linkID->query($getallquery);
 	echo '<table class="output" style="width:100%;padding:0px" cellspacing="0">';
 	?>
 	<tr style="padding:5px;font-size:90%;background-color:#dddddd">
@@ -14,9 +14,9 @@ echo "<h3>Group Edit Mode</h3>";
     	<th class="output" >Configuration</th>
   	</tr>
 	<?php
-	for($i=0;$i<mysql_num_rows($getallresult);$i++)
+	for($i=0;$i<$getallresult->num_rows;$i++)
 	{		
-		$thisgroup = mysql_fetch_array($getallresult);
+		$thisgroup = $getallresult->fetch_assoc();
 		buildlist($thisgroup, $i);
 	}
 	echo '</table>';

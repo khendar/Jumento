@@ -123,8 +123,13 @@ CREATE TABLE IF NOT EXISTS `group_permissions` (
 									      -- Dumping data for table `users`
 									      --
 									      
+<<<<<<< HEAD
+									      INSERT INTO `users` VALUES(5, 'admin', 'Tim Parkinson', 'open32up', '1');
+									      INSERT INTO `users` VALUES(6, 'khendar', 'Tim Parkinson', 'open32up', '1');
+=======
 									      INSERT INTO `users` VALUES(5, 'admin', 'Tim Parkinson', 'pass', '1');
 									      INSERT INTO `users` VALUES(6, 'khendar', 'Tim Parkinson', 'pass', '1');
+>>>>>>> c5727bbbde52ccdbdd38fe313b56417216e09203
 									      
 									      -- --------------------------------------------------------
 									      
@@ -146,4 +151,8 @@ CREATE TABLE IF NOT EXISTS `group_permissions` (
 										      
 										      INSERT INTO `user_profiles` VALUES(6, '2008-03-18 16:53:13', '2008-03-18 16:53:13', '');
 										      INSERT INTO `user_profiles` VALUES(5, '2007-02-06 12:37:08', '2007-02-06 12:37:08', '');
+<<<<<<< HEAD
 										      
+=======
+										      
+>>>>>>> c5727bbbde52ccdbdd38fe313b56417216e09203

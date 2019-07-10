@@ -9,15 +9,15 @@ else
 	$username=$_POST["username"];
 	$password=$_POST["password"];
 
-//print_r($_POST);
+
 	$loginquery = 'SELECT * FROM users, user_profiles WHERE user_name = \''.$username.'\' AND users.user_id = user_profiles.user_id';
-	$resultid = mysql_query($loginquery, $linkID);
-	if ($msg = mysql_error())
+	$resultid = $linkID->query($loginquery);
+	if ($msg = $linkID->error)
 		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
 
-	if(mysql_num_rows($resultid)!=0)
+	if($resultid->num_rows!=0)
 	{
-	    $user = mysql_fetch_array($resultid);
+	    $user = $resultid->fetch_assoc();
 
 	    if($password == $user["password"])
 	    {
@@ -26,8 +26,9 @@ else
 			$login = '
 UPDATE `user_profiles` SET `online` = 1, `date_last` = NOW(), `ip_last` = \'' . $_SERVER['REMOTE_ADDR'] . '\' WHERE `user_id` = '.$user['user_id'];
 //echo $login;
-			$resultid = mysql_query($login, $linkID);
-			if ($msg = mysql_error())
+
+			$resultid = $linkID->query($login);
+			if ($msg = $linkID->error)
 				echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
 
 

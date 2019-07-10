@@ -1,11 +1,12 @@
 <?php
 echo "<h3>User Edit Mode</h3>";
 	$getallquery = "SELECT * FROM `users`, `group_permissions`, user_profiles where users.user_group = group_permissions.group_id and users.user_id = user_profiles.user_id ";
-	$getallresult = mysql_query($getallquery, $linkID);
+
+	$getallresult = $linkID->query($getallquery);
 	$getgroups = '
 	SELECT * FROM group_permissions';
-	$getgroupsresult = mysql_query($getgroups, $linkID);
-	if($msg = mysql_error())
+	$getgroupsresult = $linkID->query($getgroups);
+	if($msg = $linkID->error)
 		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $addnew . '</pre><br /> (caused: ' . $msg . ')';
 	
 	echo '<table class="output" width="100%"  border="1" cellspacing="0" cellpadding="0">';
@@ -19,16 +20,17 @@ echo "<h3>User Edit Mode</h3>";
     	<th class="output"></th>
   	</tr>
 	<?php
-	for($i=0;$i<mysql_num_rows($getallresult);$i++)
+
+	for($i=0;$i<$getallresult->num_rows;$i++)
 	{		
-		$thisuser = mysql_fetch_array($getallresult);
-		buildlist($thisuser,$i, $getgroups, $linkID);
+		$thisuser = $getallresult->fetch_assoc();
+		buildlist($thisuser,$i, $getgroups);
 	}
 	echo '</table>';
 	
-function buildlist($thisuser,$i, $getgroups, $linkID)
+function buildlist($thisuser,$i, $getgroups)
 {
-		$getgroupsresult = mysql_query($getgroups, $linkID);
+		$getgroupsresult = $linkID->query($getgroups);
 		$user_id = $thisuser["user_id"];
 		$user_name = $thisuser["user_name"];
 		$real_name = $thisuser["real_name"];
@@ -78,9 +80,10 @@ function buildlist($thisuser,$i, $getgroups, $linkID)
 function buildgroups($result, $user_group)
 {
 echo '<select name="user_group">';
-	for ($i=0;$i<mysql_num_rows($result);$i++)
+
+	for ($i=0;$i<$result->num_rows;$i++)
 	{
-		$group = mysql_fetch_array($result);
+		$group = $result->fetch_assoc();
 		$group_id = $group['group_id'];
 		$group_name = $group['group_name'];
 //		print_r($group);

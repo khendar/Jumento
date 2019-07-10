@@ -20,8 +20,9 @@ else
 		include("db.php");
 		//$encryptedpw = md5($password);
 		$checkuserquery = "SELECT user_id FROM users WHERE user_name = \"$user_name\"";
-		$resultid = mysql_query($checkuserquery, $linkID);
-		if(mysql_num_rows($resultid)!= 0) 
+
+		$resultid = $linkID->query($checkuserquery);
+		if($resultid->num_rows != 0) 
 		{
 			echo "Sorry this username is taken - Try again<br>";
 			printform();
@@ -76,13 +77,14 @@ function adduser($user_name, $real_name,$password,$linkID)
 	$addquery = "INSERT INTO users ( user_name, real_name, password)
 				VALUES ('$user_name', '$real_name', '$password')";
 				//echo $addquery;
-	$resultid = mysql_query($addquery, $linkID) or die(mysql_error());
+
+	$resultid = $linkID->query($addquery) or die($linkID->error);
 	$getlast = 'select user_id from users order by user_id desc';
-	$resultid = mysql_query($getlast, $linkID) or die(mysql_error());
-	$lastuser = mysql_fetch_array($resultid);
+	$resultid = $linkID->query($getlast) or die($linkID->error);
+	$lastuser = $resultid->fetch_assoc;
 	$u_id = $lastuser['user_id'];
 	$addprofile = "insert into user_profiles (user_id, date_joined) values ('$u_id', NOW())";
-	$resultid = mysql_query($addprofile, $linkID) or die(mysql_error());
+	$resultid = $linkID->query($addprofile) or die($linkID->error);
 	echo 'Thankyou for signing up - Have Fun! =D';
 	
 }?>

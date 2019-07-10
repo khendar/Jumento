@@ -7,8 +7,8 @@ $thispage = $_GET["p"];
 if ($thispage!="")
 {
 	$getpage = "SELECT * FROM content WHERE page_id = $thispage";
-	$getpageresult = mysql_query($getpage, $linkID) or die(mysql_error());
-	$page = mysql_fetch_array($getpageresult);
+	$getpageresult = $linkID->query($getpage);
+	$page = $getpageresult->fetch_assoc();
 	//print_r($page);
 }
 if ($_POST["submit"] == "Submit")
@@ -23,7 +23,7 @@ if ($_POST["submit"] == "Submit")
 	 WHERE page_id=$page_id";
 	//echo $insertquery;
 	echo "Page update";
-	$updateresult = mysql_query($updatequery, $linkID) or die (mysql_error());
+	$updateresult = $linkID->query($updatequery);
 	
 	
 

@@ -12,116 +12,108 @@ $section_id = $_POST["section_id"];
 $section_order = $_POST["section_order"];
 $currentuser = $_SESSION["username"];
 $url = 'http://'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"].'?l='.$page_id;
+
+
 if($page_id != NULL)
 {
-echo '<h3>Edit Page</h3>';
-switch($subtask){
-    case("addbefore"):
-	echo "<h4>Adding a new section</h4>";
-		$makeroom = "UPDATE sections SET section_order = section_order + 1
-		WHERE page_id = $page_id and section_order>=$section_order";
-    	$makeroomresult = mysql_query($makeroom, $linkID) or die(mysql_error());
-		$addnew = "INSERT INTO `sections` (`page_id`, `section_order`, `section_content`, `section_date_created`,`section_user_created`, `section_user_modified`)
-		VALUES ($page_id, $section_order, 'some default content',NOW(), '$currentuser','$currentuser')";
-		$addnewresult = mysql_query($addnew, $linkID) or die(mysql_error());
-    break;
-    case("addfirst"):
-		echo "<h4>Adding a the first  section to a page</h4>";
-		$addfirst = "INSERT INTO `sections` (`page_id`, `section_order`, `section_content`, `section_date_created`,`section_user_created`, `section_user_modified`)
-		VALUES ($page_id,1 , 'some default content', NOW(), '$currentuser','$currentuser')";
-		//echo $addfirst;
-		$addfirstresult = mysql_query($addfirst, $linkID) or die(mysql_error());
-    break;
-    case("addafter"):
+	echo '<h3>Edit Page</h3>';
+	switch($subtask){
+	    case("addbefore"):
 		echo "<h4>Adding a new section</h4>";
-		$makeroom = "UPDATE sections SET section_order = section_order + 1
-		WHERE page_id = $page_id and section_order>$section_order";
-    	$makeroomresult = mysql_query($makeroom, $linkID) or die(mysql_error());
-		$addnew = "INSERT INTO sections (`page_id`, `section_order`, `section_content`, `section_date_created`,`section_user_created`, `section_user_modified`)
-		VALUES ($page_id, $section_order+1, 'some default content', NOW(),'$currentuser','$currentuser')";
+			$makeroom = "UPDATE sections SET section_order = section_order + 1
+			WHERE page_id = $page_id and section_order>=$section_order";
+	    	$makeroomresult = $linkID($makeroom);
+			$addnew = "INSERT INTO `sections` (`page_id`, `section_order`, `section_content`, `section_date_created`,`section_user_created`, `section_user_modified`)
+			VALUES ($page_id, $section_order, 'some default content',NOW(), '$currentuser','$currentuser')";
+			$addnewresult = $linkID->query($addnew);
+	    break;
+	    case("addfirst"):
+			echo "<h4>Adding a the first  section to a page</h4>";
+			$addfirst = "INSERT INTO `sections` (`page_id`, `section_order`, `section_content`, `section_date_created`,`section_user_created`, `section_user_modified`)
+			VALUES ($page_id,1 , 'some default content', NOW(), '$currentuser','$currentuser')";
+			//echo $addfirst;
+			$addfirstaasdresult = $linkID->query($addfirst);
+	    break;
+	    case("addafter"):
+			echo "<h4>Adding a new section</h4>";
+			$makeroom = "UPDATE sections SET section_order = section_order + 1
+			WHERE page_id = $page_id and section_order>$section_order";
+	    	$makeroomresult = $linkID->query($makeroom);
+			$addnew = "INSERT INTO sections (`page_id`, `section_order`, `section_content`, `section_date_created`,`section_user_created`, `section_user_modified`)
+			VALUES ($page_id, $section_order+1, 'some default content', NOW(),'$currentuser','$currentuser')";
 
-		$addnewresult = mysql_query($addnew, $linkID) or die(mysql_error());
-    break;
-    case("edit"):
-		echo "<h4>Editing section $section_id</h4>";
-		$section_type=$_POST["section_type"];
-		$section_content=addslashes($_POST["section_content"]);
-                if($section_type=="bbcode")
-                {
-                 $section_content = bb2html($section_content);
-                 }
-                $section_content = str_replace('<script>','',$section_content);
-                $section_content = str_replace('</script>','',$section_content);
-                //$section_content = closetags($section_content);
-		$editthis = "UPDATE sections SET section_content = '$section_content' ,
-		`section_user_modified` = '$currentuser'
-		WHERE section_id = $section_id";
+			$addnewresult = $linkID->query($addnew);
+	    break;
+		case("edit"):
+			echo "<h4>Editing section $section_id</h4>";
+			$section_type=$_POST["section_type"];
+			$section_content=addslashes($_POST["section_content"]);
+	        if($section_type=="bbcode"){
+	            $section_content = bb2html($section_content);
+	        }
+	        $section_content = str_replace('<script>','',$section_content);
+	        $section_content = str_replace('</script>','',$section_content);
+	        //$section_content = closetags($section_content);
+			$editthis = "UPDATE sections SET section_content = '$section_content',`section_user_modified` = '$currentuser' WHERE section_id = $section_id";
+	    	$editthisresult = $linkID->query($editthis);
+			if($linkID->error)
+			{
+				echo '<pre>'.$editthisresult .'</pre> caused'.$linkID->error;
+			}
 
-    	$editthisresult = mysql_query($editthis, $linkID);
-		if(mysql_error())
-		{
-			echo '<pre>'.$editthisresult .'</pre> caused'.mysql_error();
-		}
-
-	break;
-    case("delete"):
-		echo "<h4>Deleting section $section_id</h4>";
-		$delete = "DELETE FROM sections WHERE section_id=$section_id";
-		$deleteresult = mysql_query($delete, $linkID) or die(mysql_error());
-		$squeezeup = "UPDATE sections SET section_order = section_order - 1 WHERE page_id = $page_id and section_order>$section_order";
-		$squeezeupresult = mysql_query($squeezeup, $linkID) or die(mysql_error());
-
-    break;
-    case("moveup"):
-		echo "moveup";
-	break;
-	case("type"):
-		echo "<h4>Updating section type $section_id</h4>";
-
-		$section_type = $_POST['section_type'];
+		break;
+		case("delete"):
+			echo "<h4>Deleting section $section_id</h4>";
+			$delete = "DELETE FROM sections WHERE section_id=$section_id";
+			$deleteresult = $linkID->query($delete) or die($linkID->error);
+			$squeezeup = "UPDATE sections SET section_order = section_order - 1 WHERE page_id = $page_id and section_order>$section_order";
+			$squeezeupresult = $linkID->query($squeezeup) or die($linkID->error);
+	    break;
+	    case("moveup"):
+			echo "moveup";
+		break;
+		case("type"):
+			echo "<h4>Updating section type $section_id</h4>";
+			$section_type = $_POST['section_type'];
 			echo $section_type;
-		$sectiontype='
-UPDATE `sections` SET `section_type` = \''.$section_type.'\',
-`section_date_modified` = NOW(), section_user_modified = \''.$currentuser.'\'
-WHERE `section_id` ='.$section_id;
-
-	$sectiontyperesult = mysql_query($sectiontype, $linkID);
-
-	if($msg = mysql_error())
-		echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $sectiontype . '</pre><br /> (caused: ' . $msg . ')';
-
-	break;
-	case("pageinfo"):
-		echo "<h4>Updating page info $page_id</h4>";
-		$page_title = addslashes($_POST["page_title"]);
-		$page_keywords = addslashes($_POST["page_keywords"]);
-		$page_description = addslashes($_POST["page_description"]);
-		$page_visibility = $_POST['page_visibility'];
-		$pageinfo = "UPDATE `pages` SET `page_title` = '$page_title', `page_keywords`='$page_keywords',
-		`page_description` = '$page_description',`page_visibility`='$page_visibility', `user_modified` = '$currentuser' WHERE `page_id`=$page_id";
-		//echo $pageinfo;
-		$pageinforesult = mysql_query($pageinfo, $linkID) or die (mysql_error());
-
-	break;
-    default:
-		echo "";
-}
-
+			$sectiontype='
+			UPDATE `sections` SET `section_type` = \''.$section_type.'\',
+			`section_date_modified` = NOW(), section_user_modified = \''.$currentuser.'\'
+			WHERE `section_id` ='.$section_id;
+			$sectiontyperesult = $linkID->query($sectiontype);
+			if($msg = $linkID->error)
+				echo __LINE__ . ' of ' . __FILE__ . '<pre>' . $sectiontype . '</pre><br /> (caused: ' . $msg . ')';
+		break;
+		case("pageinfo"):
+			echo "<h4>Updating page info $page_id</h4>";
+			$page_title = addslashes($_POST["page_title"]);
+			$page_keywords = addslashes($_POST["page_keywords"]);
+			$page_description = addslashes($_POST["page_description"]);
+			$page_visibility = $_POST['page_visibility'];
+			$pageinfo = "UPDATE `pages` SET `page_title` = '$page_title', `page_keywords`='$page_keywords',
+			`page_description` = '$page_description',`page_visibility`='$page_visibility', `user_modified` = '$currentuser' WHERE `page_id`=$page_id";
+			//echo $pageinfo;
+			$pageinforesult = $linkID->query($pageinfo) or die ($linkID->error);
+		break;
+	    default:
+			echo "";
+	}
 
     $getpagequery = "SELECT * FROM pages, sections WHERE sections.page_id=$page_id
 	AND sections.page_id = pages.page_id ORDER by sections.section_order ASC";
 	//echo $getpagequery;
-	$getpageresult = mysql_query($getpagequery,$linkID) or die(mysql_error());
-    if(mysql_num_rows($getpageresult)!=0)
+
+	$getpageresult = $linkID->query($getpagequery);
+    if($getpageresult->num_rows!=0)
     {
-		$page = mysql_fetch_array($getpageresult);
-		showpageinfo($page, $linkID);
-		$getpageresult = mysql_query($getpagequery,$linkID) or die(mysql_error());
-		for($i=0;$i<mysql_num_rows($getpageresult);$i++)
+		$page = $getpageresult->fetch_assoc();
+		showpageinfo($page);
+		$getpageresult = $linkID->query($getpagequery);
+		for($i=0;$i<$getpageresult->num_rows;$i++)
         {
-	    	$page = mysql_fetch_array($getpageresult);
+	    	$page = $getpageresult->fetch_assoc();
 	    	$pagecontents .= $page["section_content"];
-	    	showsections($page, $linkID);
+	    	showsections($page);
         }
 		$page_description = $page["page_description"];
 		$page_keywords = $page["page_keywords"];
@@ -135,9 +127,10 @@ WHERE `section_id` ='.$section_id;
     else
     {
 	    $getpagequery = "SELECT * FROM pages WHERE pages.page_id=$page_id ";
-		$getpageresult = mysql_query($getpagequery,$linkID) or die(mysql_error());
-		$page = mysql_fetch_array($getpageresult);
-		showpageinfo($page, $linkID);
+
+		$getpageresult = $linkID->query($getpagequery,$linkID);
+		$page = $getpageresult->fetch_assoc();
+		showpageinfo($page);
 		echo "This page has no sections yet. <br/>";
 		?>
 		<form name="addfirst" method="post" action = "index.php">
@@ -157,7 +150,8 @@ else
 	include("editmodelist.php");
 }
 
-function showpageinfo($page, $linkID)
+
+function showpageinfo($page)
 {
 		$page_id = $page["page_id"];
 		$page_title = $page["page_title"];
@@ -215,7 +209,8 @@ function showpageinfo($page, $linkID)
 		<?php
 }
 
-function showsections($page, $linkID)
+
+function showsections($page)
 {
 $page_id = $page["page_id"];
 $section_id = $page["section_id"];
